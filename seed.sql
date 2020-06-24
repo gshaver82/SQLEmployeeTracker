@@ -8,8 +8,7 @@ CREATE TABLE departmentTable (
   departmentName varchar(30) NOT NULL
 );
 
-INSERT INTO departmentTable 
-VALUES (1, 'department');
+
 INSERT INTO departmentTable 
 VALUES (2, 'Navy');
 INSERT INTO departmentTable 
@@ -25,8 +24,6 @@ CREATE TABLE roleTable (
   FOREIGN KEY (department_id) REFERENCES departmentTable(id)
 );
 
-INSERT INTO roleTable 
-VALUES (1, 'title', 42, 1);
 INSERT INTO roleTable 
 VALUES (2, 'Fleet Admiral', 420000, 2);
 INSERT INTO roleTable 
@@ -48,10 +45,7 @@ CREATE TABLE EmployeesTable (
 );
 
 INSERT INTO EmployeesTable 
-VALUES (1, 'first_name', 'last_name', 1, 1);
-
-INSERT INTO EmployeesTable 
-VALUES (2, 'Chester', 'Nimitz', 2, 1);
+VALUES (2, 'Chester', 'Nimitz', 2, NULL);
 INSERT INTO EmployeesTable 
 VALUES (3, 'George', 'Murray', 3, 2);
 INSERT INTO EmployeesTable 

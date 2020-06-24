@@ -49,11 +49,11 @@ function StartPrompt() {
                     "View all Employees",
                     "View Employees by department",
                     "View Employees by manager",
+                    "View all roles",
                     "add Employee",
                     "Remove Employee",
                     "Update Employee role",
                     "Update Employee manager",
-                    "View all roles",
                     "Add role",
                     "Remove role",
                     "quit"
@@ -65,16 +65,16 @@ function StartPrompt() {
             } else if (StartResponse.StartChoice == "View Employees by department") {
                 viewByDepartment();
             } else if (StartResponse.StartChoice == "View Employees by manager") {
-                secondlevelfunction();
+                viewByManager();
+            } else if (StartResponse.StartChoice == "View all roles") {
+                viewAllRoles();
             } else if (StartResponse.StartChoice == "add Employee") {
-                secondlevelfunction();
+                AddEmployee();
             } else if (StartResponse.StartChoice == "Remove Employee") {
                 secondlevelfunction();
             } else if (StartResponse.StartChoice == "Update Employee role") {
                 secondlevelfunction();
             } else if (StartResponse.StartChoice == "Update Employee manager") {
-                secondlevelfunction();
-            } else if (StartResponse.StartChoice == "View all roles") {
                 secondlevelfunction();
             } else if (StartResponse.StartChoice == "Add role") {
                 secondlevelfunction();
@@ -88,26 +88,141 @@ function StartPrompt() {
         });
 };
 
-function viewByDepartment() {
-    connection.query("SELECT * FROM EmployeesTable;", function (err, data) {
-        if (err) throw err;
-        console.table(data);
-        mainOrQuit();
-    });
+
+function AddEmployee(){
+
 };
 
-function viewEmployees() {
-    query =  
-    `SELECT *
+//neither of these are working
+
+// function viewByManager() {
+//     query =
+//         `SELECT EmployeesTable.id, first_name, last_name, roleTable.title, roleTable.salary, departmentTable.departmentName
+//     FROM EmployeesTable
+//     INNER JOIN roleTable
+//     ON EmployeesTable.role_id = roleTable.id
+//     INNER JOIN departmentTable
+//     ON roleTable.department_id = departmentTable.id
+//     ORDER BY EmployeesTable.id; `
+//     connection.query(query, function (err, data) {
+//         if (err) throw err;
+//         console.log("inside first query");
+//         for (i = 0; i < data.length; i++) {
+//             console.log("inside for loop");
+//             console.log(data[i].id);
+//             ManagerQuery =
+//                 `SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
+//                 FROM employeesTable
+//                 where id =(
+//                 SELECT manager_id
+//                 FROM employeesTable
+//                 where id = ${data[i].id});`
+//             connection.query(ManagerQuery, function (err, managerData) {
+//                 if (err) throw err;
+//                 data[i].manager = managerData;
+//                 console.log("nested query");
+//                 console.log(data[i].manager);
+//             });
+//         }
+//         // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+//         // console.table(data);
+//         // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+//         mainOrQuit();
+//     });
+// };
+
+async function viewByManager() {
+    try {
+        query =
+            `SELECT EmployeesTable.id, first_name, last_name, roleTable.title, roleTable.salary, departmentTable.departmentName
     FROM EmployeesTable
     INNER JOIN roleTable
     ON EmployeesTable.role_id = roleTable.id
     INNER JOIN departmentTable
     ON roleTable.department_id = departmentTable.id
-    ORDER BY EmployeesTable.id;`
+    ORDER BY EmployeesTable.id; `
+        connection.query(query, function (err, data) {
+            if (err) throw err;
+            console.log("inside first query");
+            for (i = 0; i < data.length; i++) {
+                console.log("inside for loop");
+                console.log(data[i].id);
+                ManagerQuery =
+                    `SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
+                FROM employeesTable
+                where id =(
+                SELECT manager_id
+                FROM employeesTable
+                where id = ${data[i].id});`
+                await connection.query(ManagerQuery, function (err, managerData) {
+                    if (err) throw err;
+                    data[i].manager = managerData;
+                    console.log("nested query");
+                    console.log(data[i].manager);
+                });
+            }
+            // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            // console.table(data);
+            // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            
+        });
+        
+    } catch (err) {
+        console.log(err);
+    }
+    mainOrQuit();
+};
+
+
+
+
+
+
+function viewAllRoles() {
+    query =
+        `SELECT title
+        from roleTable;`
     connection.query(query, function (err, data) {
         if (err) throw err;
+        console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
         console.table(data);
+        console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+        mainOrQuit();
+    });
+};
+
+function viewByDepartment() {
+    query =
+        `SELECT departmentTable.departmentName, first_name, last_name
+    FROM EmployeesTable
+    INNER JOIN roleTable
+    ON EmployeesTable.role_id = roleTable.id
+    INNER JOIN departmentTable
+    ON roleTable.department_id = departmentTable.id
+    ORDER BY departmentTable.departmentName; `
+    connection.query(query, function (err, data) {
+        if (err) throw err;
+        console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+        console.table(data);
+        console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+        mainOrQuit();
+    });
+};
+
+function viewEmployees() {
+    query =
+        `SELECT first_name, last_name, roleTable.title, roleTable.salary, departmentTable.departmentName
+    FROM EmployeesTable
+    INNER JOIN roleTable
+    ON EmployeesTable.role_id = roleTable.id
+    INNER JOIN departmentTable
+    ON roleTable.department_id = departmentTable.id
+    ORDER BY EmployeesTable.id; `
+    connection.query(query, function (err, data) {
+        if (err) throw err;
+        console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+        console.table(data);
+        console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
         mainOrQuit();
     });
 };
