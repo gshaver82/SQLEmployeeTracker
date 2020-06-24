@@ -89,7 +89,7 @@ function StartPrompt() {
 };
 
 
-function AddEmployee(){
+function AddEmployee() {
 
 };
 
@@ -154,23 +154,25 @@ async function viewByManager() {
                 SELECT manager_id
                 FROM employeesTable
                 where id = ${data[i].id});`
-                await connection.query(ManagerQuery, function (err, managerData) {
+
+                connection.query(ManagerQuery, function (err, managerData) {
                     if (err) throw err;
                     data[i].manager = managerData;
                     console.log("nested query");
                     console.log(data[i].manager);
                 });
+
             }
             // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
             // console.table(data);
             // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
-            
+
         });
-        
+        mainOrQuit();
     } catch (err) {
         console.log(err);
     }
-    mainOrQuit();
+
 };
 
 
