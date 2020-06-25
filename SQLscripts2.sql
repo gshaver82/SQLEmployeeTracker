@@ -9,6 +9,22 @@ USE Employee_Tracker_db;
 --   FOREIGN KEY (manager_id) REFERENCES EmployeesTable(id)  
 -- );
 
+DELETE FROM EmployeesTable
+WHERE CONCAT_WS(' ', EmployeesTable.first_name, EmployeesTable.last_name) = 
+"Richard Best";
+
+
+                
+-- DELETE FROM roleTable WHERE roleTable.title = "Enterprise Pilot";
+
+-- INSERT INTO roleTable 
+-- VALUES (0, 'yorktown pilot', 420000, 4);
+-- SELECT *
+-- FROM roleTable;
+
+-- DELETE FROM roleTable WHERE roleTable.title = 'yorktown pilot';
+-- SELECT *
+-- FROM roleTable;
 
 -- INSERT INTO roleTable 
 -- VALUES (0, 'yp', 420000, 4);

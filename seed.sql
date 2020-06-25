@@ -20,7 +20,7 @@ CREATE TABLE roleTable (
   id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
   title varchar(30) NOT NULL,
   salary DECIMAL NOT NULL,
-  department_id  INTEGER NOT NULL,
+  department_id  INTEGER,
   FOREIGN KEY (department_id) REFERENCES departmentTable(id)
 );
 

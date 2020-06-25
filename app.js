@@ -59,7 +59,7 @@ function StartPrompt() {
                     "Update Employee role",
                     "Update Employee manager",
                     "Add role",
-                    "Remove role",
+                    "Remove role DO NOT USE IF THERE ARE NO VALID ROLES TO REMOVE",
                     "quit"
                 ],
             }
@@ -75,15 +75,15 @@ function StartPrompt() {
             } else if (StartResponse.StartChoice == "add Employee") {
                 AddEmployee();
             } else if (StartResponse.StartChoice == "Remove Employee") {
-                secondlevelfunction();
+                RemoveEmployee();
             } else if (StartResponse.StartChoice == "Update Employee role") {
                 secondlevelfunction();
             } else if (StartResponse.StartChoice == "Update Employee manager") {
                 secondlevelfunction();
             } else if (StartResponse.StartChoice == "Add role") {
                 AddRole();
-            } else if (StartResponse.StartChoice == "Remove role") {
-                secondlevelfunction();
+            } else if (StartResponse.StartChoice == "Remove role DO NOT USE IF THERE ARE NO VALID ROLES TO REMOVE") {
+                RemoveRole();
             } else if (StartResponse.StartChoice == "quit") {
                 exit();
             };
@@ -92,16 +92,92 @@ function StartPrompt() {
         });
 };
 
-
-
- async function AddRole() {
+async function RemoveEmployee() {
     try {
-              //this queries for the Departments, then strips the title from the SQL response and stores in array. 
-              DeptQuery = await query("SELECT departmentName From departmentTable;");
-              let DeptQuerylist = [];
-              for (var i = 0; i < DeptQuery.length; i++) {
-                DeptQuerylist.push(DeptQuery[i].departmentName);
-              }
+        //this queries for Employees, then strips the title from the SQL response and stores in array. 
+        EmployeeList = await query(`SELECT CONCAT_WS(' ', EmployeesTable.first_name, EmployeesTable.last_name) 
+        AS Employee
+        FROM EmployeesTable;`);
+        let EmployeeQuerylist = [];
+        for (var i = 0; i < EmployeeList.length; i++) {
+            EmployeeQuerylist.push(EmployeeList[i].Employee);
+        }
+        inquirer
+            .prompt([
+                {
+                    type: "list",
+                    message: "Which Employee would you like to remove",
+                    name: "EmployeeRemoveChoice",
+                    choices: EmployeeQuerylist,
+                },
+            ]).then(async function (RemoveEmployeeResponse) {
+                SQLquery =
+                    `DELETE FROM EmployeesTable
+                    WHERE CONCAT_WS(' ', EmployeesTable.first_name, EmployeesTable.last_name) = 
+                    "${RemoveEmployeeResponse.EmployeeRemoveChoice}";`;
+                await query(SQLquery);
+                console.log("Employee Deleted!");
+                mainOrQuit();
+
+            }).catch(function (error) {
+                console.log("An error occured:", error);
+            });
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+async function RemoveRole() {
+    try {
+        rolesQuery = await query(`SELECT roleTable.title
+        FROM EmployeesTable
+        RIGHT JOIN roleTable
+        ON EmployeesTable.role_id = roleTable.id
+        where EmployeesTable.id IS NULL;`);
+        console.log("rolesQuery");
+        console.log(rolesQuery);
+        //this doesnt work and i dont know why
+        if (!rolesQuery) {
+            console.log("Either there are no roles or \nall roles have employees assigned and cannot be deleted");
+
+        } else {
+            let rolesQuerylist = [];
+            for (var i = 0; i < rolesQuery.length; i++) {
+                rolesQuerylist.push(rolesQuery[i].title);
+            }
+            inquirer
+                .prompt([
+                    {
+                        type: "list",
+                        message: "Which Role would you like to delete?",
+                        name: "RoleChoice",
+                        choices: rolesQuerylist,
+                    },
+                ]).then(async function (RemoveRoleResponse) {
+                    SQLquery =
+                        `DELETE FROM roleTable WHERE roleTable.title = "${RemoveRoleResponse.RoleChoice}";`;
+                    await query(SQLquery);
+                    console.log("Role Deleted!");
+                    mainOrQuit();
+
+                }).catch(function (error) {
+                    console.log("An error occured:", error);
+                });
+        }
+
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+async function AddRole() {
+    try {
+        //this queries for the Departments, then strips the title from the SQL response and stores in array. 
+        DeptQuery = await query("SELECT departmentName From departmentTable;");
+        let DeptQuerylist = [];
+        for (var i = 0; i < DeptQuery.length; i++) {
+            DeptQuerylist.push(DeptQuery[i].departmentName);
+        }
         inquirer
             .prompt([
                 {
@@ -120,7 +196,7 @@ function StartPrompt() {
                     name: "DeptChoice",
                     choices: DeptQuerylist,
                 },
-            ]).then( async function (AddRoleResponse) {
+            ]).then(async function (AddRoleResponse) {
                 DeptIDObject = await query(`SELECT id
                 FROM departmentTable
                 WHERE departmentName = "${AddRoleResponse.DeptChoice}";`);
