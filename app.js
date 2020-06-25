@@ -93,6 +93,9 @@ function StartPrompt() {
 };
 
 
+
+
+
 async function AddEmployee() {
     try {
         //this queries for the roles, then strips the title from the SQL response and stores in array. 
@@ -102,19 +105,17 @@ async function AddEmployee() {
             rolesQuerylist.push(rolesQuery[i].title);
         }
 
-
-        PossibleManagerQuery = await query(`SELECT CONCAT_WS(' ', EmployeesTable.first_name, EmployeesTable.last_name) 
-        AS ManagerName
+        //this queries for Employees, then strips the title from the SQL response and stores in array. 
+        EmployeeList = await query(`SELECT CONCAT_WS(' ', EmployeesTable.first_name, EmployeesTable.last_name) 
+        AS Employee
         FROM EmployeesTable;`);
-        let ManagerQuerylist = [];
-        for (var i = 0; i < PossibleManagerQuery.length; i++) {
-            ManagerQuerylist.push(PossibleManagerQuery[i].ManagerName);
+        let EmployeeQuerylist = [];
+        for (var i = 0; i < EmployeeList.length; i++) {
+            EmployeeQuerylist.push(EmployeeList[i].Employee);
         }
-        // ManagerOption.push('');
-        console.log(rolesQuerylist);
-        console.log(ManagerQuerylist);
 
-
+        // console.log(rolesQuerylist);
+        // console.log(EmployeeQuerylist);
 
         inquirer
             .prompt([
@@ -138,7 +139,8 @@ async function AddEmployee() {
                     type: "list",
                     message: "Manager?",
                     name: "ManagerChoice",
-                    choices: ManagerQuerylist,
+                    //TODO add option for NULL manager
+                    choices: EmployeeQuerylist,
                 },
             ]).then(async function (AddEmployeeResponse) {
                 //gets sql role id from the listed role choice
