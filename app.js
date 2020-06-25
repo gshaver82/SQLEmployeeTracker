@@ -81,7 +81,7 @@ function StartPrompt() {
             } else if (StartResponse.StartChoice == "Update Employee manager") {
                 secondlevelfunction();
             } else if (StartResponse.StartChoice == "Add role") {
-                secondlevelfunction();
+                AddRole();
             } else if (StartResponse.StartChoice == "Remove role") {
                 secondlevelfunction();
             } else if (StartResponse.StartChoice == "quit") {
@@ -94,7 +94,59 @@ function StartPrompt() {
 
 
 
+ async function AddRole() {
+    try {
+              //this queries for the Departments, then strips the title from the SQL response and stores in array. 
+              DeptQuery = await query("SELECT departmentName From departmentTable;");
+              let DeptQuerylist = [];
+              for (var i = 0; i < DeptQuery.length; i++) {
+                DeptQuerylist.push(DeptQuery[i].departmentName);
+              }
+        inquirer
+            .prompt([
+                {
+                    type: "input",
+                    message: "Title?",
+                    name: "TitleChoice",
+                },
+                {
+                    type: "input",
+                    message: "Salary?",
+                    name: "SalaryChoice",
+                },
+                {
+                    type: "list",
+                    message: "Department?",
+                    name: "DeptChoice",
+                    choices: DeptQuerylist,
+                },
+            ]).then( async function (AddRoleResponse) {
+                DeptIDObject = await query(`SELECT id
+                FROM departmentTable
+                WHERE departmentName = "${AddRoleResponse.DeptChoice}";`);
+                //turns sql object into int of the id
+                let DeptId = parseInt(DeptIDObject[0].id);
+                console.log("DeptId-------");
+                console.log(DeptId);
+                //the next 4 lines of code take the choice from prompt above and retrieves the 
+                //appropriate department ID for storing into sql query
+                //gets sql role id from the listed role choice
+                SQLquery =
+                    `INSERT INTO roleTable 
+                    VALUES (0, '${AddRoleResponse.TitleChoice}', 
+                    ${AddRoleResponse.SalaryChoice}, 
+                    ${DeptId});`;
+                connection.query(SQLquery);
+                console.log("Role Added!");
+                mainOrQuit();
 
+            }).catch(function (error) {
+                console.log("An error occured:", error);
+            });
+    } catch (err) {
+        console.log(err);
+    }
+};
 
 async function AddEmployee() {
     try {

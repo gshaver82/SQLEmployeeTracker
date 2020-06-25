@@ -9,9 +9,24 @@ USE Employee_Tracker_db;
 --   FOREIGN KEY (manager_id) REFERENCES EmployeesTable(id)  
 -- );
 
-SELECT id
-FROM roleTable
-WHERE title = "Fleet Admiral";
+
+-- INSERT INTO roleTable 
+-- VALUES (0, 'yp', 420000, 4);
+
+
+-- SELECT id
+-- From departmentTable
+-- WHERE departmentName = "USS Yorktown";
+-- SELECT id
+--                 From departmentTable
+--                 WHERE departmentName = "USS Yorktown";
+
+-- SELECT *
+-- FROM roleTable;
+
+-- SELECT id
+-- FROM roleTable
+-- WHERE title = "Fleet Admiral";
 
 
 
