@@ -82,7 +82,7 @@ function StartPrompt() {
                 secondlevelfunction();
             } else if (StartResponse.StartChoice == "Add role") {
                 AddRole();
-            } else if (StartResponse.StartChoice == "Remove role DO NOT USE IF THERE ARE NO VALID ROLES TO REMOVE") {
+            } else if (StartResponse.StartChoice == "Remove role") {
                 RemoveRole();
             } else if (StartResponse.StartChoice == "quit") {
                 exit();
@@ -134,10 +134,10 @@ async function RemoveRole() {
         RIGHT JOIN roleTable
         ON EmployeesTable.role_id = roleTable.id
         where EmployeesTable.id IS NULL;`);
-        //this doesnt work and i dont know why
-        if (!rolesQuery) {
-            console.log("Either there are no roles or \nall roles have employees assigned and cannot be deleted");
 
+        if (rolesQuery.length === 0  ) {
+            console.log("Either there are no roles or \nall roles have employees assigned and cannot be deleted");
+            mainOrQuit();
         } else {
             let rolesQuerylist = [];
             for (var i = 0; i < rolesQuery.length; i++) {
