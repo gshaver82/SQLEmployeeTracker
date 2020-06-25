@@ -69,7 +69,18 @@ function StartPrompt() {
             } else if (StartResponse.StartChoice == "View Employees by department") {
                 viewByDepartment();
             } else if (StartResponse.StartChoice == "View Employees by manager") {
-                viewByManager();
+                
+                const ManagerTable = async () => {
+                    const data = await EmployeeSql();
+                    const FinalSqlTable = await ManagerSql(data);
+                    console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+                    console.log(FinalSqlTable);
+                    console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+                    return FinalSqlTable;
+                }
+                ManagerTable();
+                mainOrQuit();
+                // viewByManager();
             } else if (StartResponse.StartChoice == "View all roles") {
                 viewAllRoles();
             } else if (StartResponse.StartChoice == "add Employee") {
@@ -92,6 +103,16 @@ function StartPrompt() {
         });
 };
 
+async function EmployeeSql(){
+return 1;
+};
+async function ManagerSql(data){
+return data +2;
+};
+
+
+
+
 
 function AddEmployee() {
 
@@ -108,6 +129,7 @@ function viewByManager() {
     INNER JOIN departmentTable
     ON roleTable.department_id = departmentTable.id
     ORDER BY EmployeesTable.id; `;
+<<<<<<< Updated upstream
     connection.query(SQLquery, function (err, data) {
         if (err) throw err;
         console.log("inside first query data is ");
@@ -149,6 +171,91 @@ function viewByManager() {
 };
 
 
+=======
+    await query(SQLquery, async function (err, data) {
+        if (err) throw err;
+        console.log("inside first query data length is " + data.length);
+    });
+    console.log('just outside  first awaitquery');
+    await processArray(data);
+
+    mainOrQuit();
+};
+
+async function processArray(data) {
+    let i = 0;
+    for (const item of data) {
+        console.log("inside for loop data[i].id is");
+        console.log(data[i].id);
+        ManagerQuery =
+            `SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
+        FROM employeesTable
+        where id =(
+        SELECT manager_id
+        FROM employeesTable
+        where id = ${data[i].id});`;
+
+        console.log("ManagerQuery");
+
+        //------------------------
+
+        // await query(ManagerQuery, function (err, managerData) {
+        //     if (err) throw err;
+        //     console.log("nested query i is" + i);
+        //     console.log("managers name is " + managerData[0].FullName);
+        //     // console.log(managerData);
+        //     data[i].manager = managerData[0].FullName;
+        //     console.log(data[i]);  
+        // });
+
+        //------------------------
+
+        i++;
+        console.log('end of for loop');
+    }
+    console.log('end of processArray');
+}
+
+// async function ManagerQueryFunction(ManagerQuery, data) {
+//     await query(ManagerQuery, function (err, managerData) {
+//         if (err) throw err;
+//         console.log("nested query \n i is" + i);
+//         // console.log(managerData);
+//         // data[i].manager = managerData.FullName;
+//         // data[i].manager = managerData;
+//         // console.log(data[i].manager);  
+//         console.log(managerData[0].FullName);
+//         console.log(data[i]);
+//     });
+
+// };
+
+
+
+// for (i = 0; i < data.length; i++) {
+//     console.log("inside for loop data[i].id is");
+//     console.log(data[i].id);
+//     ManagerQuery =
+//         `SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
+//         FROM employeesTable
+//         where id =(
+//         SELECT manager_id
+//         FROM employeesTable
+//         where id = 5);`;
+//     //${data[i].id}
+
+//     connection.query(ManagerQuery, function (err, managerData) {
+//         if (err) throw err;
+//         console.log("nested query \n i is");
+//         console.log(i);
+//         console.log(data[i]);
+//         // console.log(managerData);
+//         // data[i].manager = managerData.FullName;
+//         // data[i].manager = managerData;
+//         // console.log(data[i].manager);                
+//     });
+// }
+>>>>>>> Stashed changes
 
 
 // function viewByManager() {
@@ -259,7 +366,6 @@ function viewEmployees() {
         mainOrQuit();
     });
 };
-
 function mainOrQuit() {
     inquirer
         .prompt([
