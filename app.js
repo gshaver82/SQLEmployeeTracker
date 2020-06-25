@@ -93,123 +93,100 @@ function StartPrompt() {
 };
 
 
-function AddEmployee() {
+async function AddEmployee() {
+    try {
+        //this queries for the roles, then strips the title from the SQL response and stores in array. 
+        rolesQuery = await query("SELECT title from roleTable;");
+        let rolesQuerylist = [];
+        for (var i = 0; i < rolesQuery.length; i++) {
+            rolesQuerylist.push(rolesQuery[i].title);
+        }
 
+
+        PossibleManagerQuery = await query(`SELECT CONCAT_WS(' ', EmployeesTable.first_name, EmployeesTable.last_name) 
+        AS ManagerName
+        FROM EmployeesTable;`);
+        let ManagerQuerylist = [];
+        for (var i = 0; i < PossibleManagerQuery.length; i++) {
+            ManagerQuerylist.push(PossibleManagerQuery[i].ManagerName);
+        }
+        // ManagerOption.push('');
+        console.log(rolesQuerylist);
+        console.log(ManagerQuerylist);
+
+
+
+        inquirer
+            .prompt([
+                {
+                    type: "input",
+                    message: "First name?",
+                    name: "FnameChoice",
+                },
+                {
+                    type: "input",
+                    message: "Last name?",
+                    name: "LnameChoice",
+                },
+                {
+                    type: "list",
+                    message: "Role?",
+                    name: "RoleChoice",
+                    choices: rolesQuerylist,
+                },
+                {
+                    type: "list",
+                    message: "Manager?",
+                    name: "ManagerChoice",
+                    choices: ManagerQuerylist,
+                },
+            ]).then(async function (AddEmployeeResponse) {
+                //gets sql role id from the listed role choice
+                RoleIDObject = await query(`SELECT id
+                FROM roleTable
+                WHERE title = "${AddEmployeeResponse.RoleChoice}";`);
+                //turns sql object into int of the id
+                let RoleId = parseInt(RoleIDObject[0].id);
+                //gets sql manager id from the listed role choice
+                ManagerIDObject = await query(`SELECT id
+                FROM EmployeesTable
+                WHERE CONCAT_WS(' ', EmployeesTable.first_name, EmployeesTable.last_name) = 
+                "${AddEmployeeResponse.ManagerChoice}";`);
+                //turns sql object into int of the id             
+                let ManagerID = parseInt(ManagerIDObject[0].id);
+                //inserts data into sql from variable composed of all data collected
+                SQLquery =
+                    `INSERT INTO EmployeesTable 
+                    VALUES (NULL, '${AddEmployeeResponse.FnameChoice}', '${AddEmployeeResponse.LnameChoice}', 
+                    ${RoleId}, ${ManagerID});`;
+                connection.query(SQLquery);
+                console.log("Employee Added!");
+                mainOrQuit();
+
+            }).catch(function (error) {
+                console.log("An error occured:", error);
+            });
+    } catch (err) {
+        console.log(err);
+    }
 };
 
-//neither of these are working
 
 function viewByManager() {
     SQLquery =
-        `SELECT EmployeesTable.id, first_name, last_name, roleTable.title, roleTable.salary, departmentTable.departmentName
-    FROM EmployeesTable
-    INNER JOIN roleTable
-    ON EmployeesTable.role_id = roleTable.id
-    INNER JOIN departmentTable
-    ON roleTable.department_id = departmentTable.id
-    ORDER BY EmployeesTable.id; `;
+        `SELECT CONCAT_WS(' ', b.first_name, b.last_name) AS ManagerName, CONCAT_WS(' ', a.first_name, a.last_name) AS EmployeeName
+        FROM EmployeesTable a, EmployeesTable b
+        WHERE b.id = a.manager_id;`;
     connection.query(SQLquery, function (err, data) {
         if (err) throw err;
-        console.log("inside first query data is ");
-        console.log(data);
-        for (i = 0; i < data.length; i++) {
-            console.log("inside for loop data[i].id is");
-            console.log(data[i].id);
 
-
-            ManagerQuery =
-                `SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
-                FROM employeesTable
-                where id =(
-                SELECT manager_id
-                FROM employeesTable
-                where id = 5);`;
-
-            //${data[i].id}
-
-            connection.query(ManagerQuery, function (err, managerData) {
-                if (err) throw err;
-                console.log("nested query \n i is");
-                console.log(i);
-                console.log(data[i]);
-                // console.log(managerData);
-                // data[i].manager = managerData.FullName;
-                // data[i].manager = managerData;
-
-                // console.log(data[i].manager);
-                
-            });
-        }
-        // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
-        // console.table(data);
-        // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+        console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+        console.table(data);
+        console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
         mainOrQuit();
     });
 
 };
-
-
-
-
-// function viewByManager() {
-//     // try {
-//         SQLquery =
-//             `SELECT EmployeesTable.id, first_name, last_name, roleTable.title, roleTable.salary, departmentTable.departmentName
-//     FROM EmployeesTable
-//     INNER JOIN roleTable
-//     ON EmployeesTable.role_id = roleTable.id
-//     INNER JOIN departmentTable
-//     ON roleTable.department_id = departmentTable.id
-//     ORDER BY EmployeesTable.id; `;
-//         data = QueryFunction(SQLquery);
-//         console.log("line 154 data");
-//         console.log(data);
-//         console.log("just outside for loop");
-//         for (i = 0; i < data.length; i++) {
-//             console.log("inside for loop");
-//             console.log(data[i].id);
-//             ManagerQuery =
-//                 `SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
-//             FROM employeesTable
-//             where id =(
-//             SELECT manager_id
-//             FROM employeesTable
-//             where id = ${data[i].id});`;
-//             managerData = ManagerQueryFunction(ManagerQuery);
-//             data[i].manager = managerData;
-//             console.log("nested query");
-//             console.log(data[i].manager);
-//         }
-//         console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
-//         console.table(data);
-//         console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
-//         mainOrQuit();
-//     // } catch (err) {
-//     //     console.log(err);
-//     // }
-// };
-
-// function QueryFunction() {
-//     query(SQLquery, function (err, data) {
-//         if (err) throw err;
-//         console.log("inside first query line 184 data");
-//         console.log(data);
-//         return data;
-//     });
-
-// };
-
-// function ManagerQueryFunction() {
-//     query(ManagerQuery, function (err, managerData) {
-//         if (err) throw err;
-//         return managerData;
-//     });
-
-// };
-
-
-
-
 
 function viewAllRoles() {
     SQLquery =
