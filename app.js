@@ -134,8 +134,6 @@ async function RemoveRole() {
         RIGHT JOIN roleTable
         ON EmployeesTable.role_id = roleTable.id
         where EmployeesTable.id IS NULL;`);
-        console.log("rolesQuery");
-        console.log(rolesQuery);
         //this doesnt work and i dont know why
         if (!rolesQuery) {
             console.log("Either there are no roles or \nall roles have employees assigned and cannot be deleted");
