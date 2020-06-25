@@ -1,5 +1,11 @@
 USE Employee_Tracker_db;
 
+SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
+                FROM employeesTable
+                where id =(
+                SELECT manager_id
+                FROM employeesTable
+                where id = 5);
 
 -- SELECT *
 -- FROM EmployeesTable
@@ -17,12 +23,12 @@ USE Employee_Tracker_db;
   
   
 
-SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
-FROM employeesTable
-where id =(
-SELECT manager_id
-FROM employeesTable
-where first_name = 'Wade');
+-- SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
+-- FROM employeesTable
+-- where id =(
+-- SELECT manager_id
+-- FROM employeesTable
+-- where id = 6);
   
 --   this selects all employees who are under the same manager as the one specified
   

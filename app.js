@@ -16,6 +16,8 @@ const cTable = require('console.table');
 // ];
 // console.table(temp);
 
+
+
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
@@ -23,6 +25,8 @@ var connection = mysql.createConnection({
     password: "1Redsql",
     database: "Employee_Tracker_db"
 });
+const util = require("util");
+const query = util.promisify(connection.query).bind(connection);
 
 connection.connect(function (err) {
     if (err) {
@@ -95,96 +99,123 @@ function AddEmployee() {
 
 //neither of these are working
 
-// function viewByManager() {
-//     query =
-//         `SELECT EmployeesTable.id, first_name, last_name, roleTable.title, roleTable.salary, departmentTable.departmentName
-//     FROM EmployeesTable
-//     INNER JOIN roleTable
-//     ON EmployeesTable.role_id = roleTable.id
-//     INNER JOIN departmentTable
-//     ON roleTable.department_id = departmentTable.id
-//     ORDER BY EmployeesTable.id; `
-//     connection.query(query, function (err, data) {
-//         if (err) throw err;
-//         console.log("inside first query");
-//         for (i = 0; i < data.length; i++) {
-//             console.log("inside for loop");
-//             console.log(data[i].id);
-//             ManagerQuery =
-//                 `SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
-//                 FROM employeesTable
-//                 where id =(
-//                 SELECT manager_id
-//                 FROM employeesTable
-//                 where id = ${data[i].id});`
-//             connection.query(ManagerQuery, function (err, managerData) {
-//                 if (err) throw err;
-//                 data[i].manager = managerData;
-//                 console.log("nested query");
-//                 console.log(data[i].manager);
-//             });
-//         }
-//         // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
-//         // console.table(data);
-//         // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
-//         mainOrQuit();
-//     });
-// };
-
-async function viewByManager() {
-    try {
-        query =
-            `SELECT EmployeesTable.id, first_name, last_name, roleTable.title, roleTable.salary, departmentTable.departmentName
+function viewByManager() {
+    SQLquery =
+        `SELECT EmployeesTable.id, first_name, last_name, roleTable.title, roleTable.salary, departmentTable.departmentName
     FROM EmployeesTable
     INNER JOIN roleTable
     ON EmployeesTable.role_id = roleTable.id
     INNER JOIN departmentTable
     ON roleTable.department_id = departmentTable.id
-    ORDER BY EmployeesTable.id; `
-        connection.query(query, function (err, data) {
-            if (err) throw err;
-            console.log("inside first query");
-            for (i = 0; i < data.length; i++) {
-                console.log("inside for loop");
-                console.log(data[i].id);
-                ManagerQuery =
-                    `SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
+    ORDER BY EmployeesTable.id; `;
+    connection.query(SQLquery, function (err, data) {
+        if (err) throw err;
+        console.log("inside first query data is ");
+        console.log(data);
+        for (i = 0; i < data.length; i++) {
+            console.log("inside for loop data[i].id is");
+            console.log(data[i].id);
+
+
+            ManagerQuery =
+                `SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
                 FROM employeesTable
                 where id =(
                 SELECT manager_id
                 FROM employeesTable
-                where id = ${data[i].id});`
+                where id = 5);`;
 
-                connection.query(ManagerQuery, function (err, managerData) {
-                    if (err) throw err;
-                    data[i].manager = managerData;
-                    console.log("nested query");
-                    console.log(data[i].manager);
-                });
+            //${data[i].id}
 
-            }
-            // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
-            // console.table(data);
-            // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            connection.query(ManagerQuery, function (err, managerData) {
+                if (err) throw err;
+                console.log("nested query \n i is");
+                console.log(i);
+                console.log(data[i]);
+                // console.log(managerData);
+                // data[i].manager = managerData.FullName;
+                // data[i].manager = managerData;
 
-        });
+                // console.log(data[i].manager);
+                
+            });
+        }
+        // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+        // console.table(data);
+        // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
         mainOrQuit();
-    } catch (err) {
-        console.log(err);
-    }
+    });
 
 };
 
 
 
 
+// function viewByManager() {
+//     // try {
+//         SQLquery =
+//             `SELECT EmployeesTable.id, first_name, last_name, roleTable.title, roleTable.salary, departmentTable.departmentName
+//     FROM EmployeesTable
+//     INNER JOIN roleTable
+//     ON EmployeesTable.role_id = roleTable.id
+//     INNER JOIN departmentTable
+//     ON roleTable.department_id = departmentTable.id
+//     ORDER BY EmployeesTable.id; `;
+//         data = QueryFunction(SQLquery);
+//         console.log("line 154 data");
+//         console.log(data);
+//         console.log("just outside for loop");
+//         for (i = 0; i < data.length; i++) {
+//             console.log("inside for loop");
+//             console.log(data[i].id);
+//             ManagerQuery =
+//                 `SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
+//             FROM employeesTable
+//             where id =(
+//             SELECT manager_id
+//             FROM employeesTable
+//             where id = ${data[i].id});`;
+//             managerData = ManagerQueryFunction(ManagerQuery);
+//             data[i].manager = managerData;
+//             console.log("nested query");
+//             console.log(data[i].manager);
+//         }
+//         console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+//         console.table(data);
+//         console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+//         mainOrQuit();
+//     // } catch (err) {
+//     //     console.log(err);
+//     // }
+// };
+
+// function QueryFunction() {
+//     query(SQLquery, function (err, data) {
+//         if (err) throw err;
+//         console.log("inside first query line 184 data");
+//         console.log(data);
+//         return data;
+//     });
+
+// };
+
+// function ManagerQueryFunction() {
+//     query(ManagerQuery, function (err, managerData) {
+//         if (err) throw err;
+//         return managerData;
+//     });
+
+// };
+
+
+
 
 
 function viewAllRoles() {
-    query =
+    SQLquery =
         `SELECT title
         from roleTable;`
-    connection.query(query, function (err, data) {
+    query(SQLquery, function (err, data) {
         if (err) throw err;
         console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
         console.table(data);
@@ -194,7 +225,7 @@ function viewAllRoles() {
 };
 
 function viewByDepartment() {
-    query =
+    SQLquery =
         `SELECT departmentTable.departmentName, first_name, last_name
     FROM EmployeesTable
     INNER JOIN roleTable
@@ -202,7 +233,7 @@ function viewByDepartment() {
     INNER JOIN departmentTable
     ON roleTable.department_id = departmentTable.id
     ORDER BY departmentTable.departmentName; `
-    connection.query(query, function (err, data) {
+    query(SQLquery, function (err, data) {
         if (err) throw err;
         console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
         console.table(data);
@@ -212,7 +243,7 @@ function viewByDepartment() {
 };
 
 function viewEmployees() {
-    query =
+    SQLquery =
         `SELECT first_name, last_name, roleTable.title, roleTable.salary, departmentTable.departmentName
     FROM EmployeesTable
     INNER JOIN roleTable
@@ -220,7 +251,7 @@ function viewEmployees() {
     INNER JOIN departmentTable
     ON roleTable.department_id = departmentTable.id
     ORDER BY EmployeesTable.id; `
-    connection.query(query, function (err, data) {
+    query(SQLquery, function (err, data) {
         if (err) throw err;
         console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
         console.table(data);

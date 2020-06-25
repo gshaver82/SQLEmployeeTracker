@@ -31,7 +31,7 @@ VALUES (3, 'Enterprise Captain', 124000, 3);
 INSERT INTO roleTable 
 VALUES (4, 'Yorktown Captain', 124000, 4);
 INSERT INTO roleTable 
-VALUES (5, 'Enterprise Pilot', 124000, 3);
+VALUES (5, 'Enterprise Pilot', 42000, 3);
 
 CREATE TABLE EmployeesTable (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
