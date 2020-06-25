@@ -99,7 +99,7 @@ function AddEmployee() {
 
 //neither of these are working
 
-function viewByManager() {
+async function viewByManager() {
     SQLquery =
         `SELECT EmployeesTable.id, first_name, last_name, roleTable.title, roleTable.salary, departmentTable.departmentName
     FROM EmployeesTable
@@ -108,47 +108,76 @@ function viewByManager() {
     INNER JOIN departmentTable
     ON roleTable.department_id = departmentTable.id
     ORDER BY EmployeesTable.id; `;
-    connection.query(SQLquery, function (err, data) {
+    query(SQLquery, async function (err, data) {
         if (err) throw err;
         console.log("inside first query data is ");
         console.log(data);
-        for (i = 0; i < data.length; i++) {
-            console.log("inside for loop data[i].id is");
-            console.log(data[i].id);
 
+        await processArray(data);
 
-            ManagerQuery =
-                `SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
-                FROM employeesTable
-                where id =(
-                SELECT manager_id
-                FROM employeesTable
-                where id = 5);`;
-
-            //${data[i].id}
-
-            connection.query(ManagerQuery, function (err, managerData) {
-                if (err) throw err;
-                console.log("nested query \n i is");
-                console.log(i);
-                console.log(data[i]);
-                // console.log(managerData);
-                // data[i].manager = managerData.FullName;
-                // data[i].manager = managerData;
-
-                // console.log(data[i].manager);
-                
-            });
-        }
         // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
         // console.table(data);
         // console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
         mainOrQuit();
     });
-
 };
 
+async function processArray(data)  {
+    let i = 0;
+    for (const item of data) {
+        console.log("inside for loop data[i].id is");
+        console.log(data[i].id);
+        ManagerQuery =
+            `SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
+        FROM employeesTable
+        where id =(
+        SELECT manager_id
+        FROM employeesTable
+        where id = ${data[i].id});`;
 
+        console.log("ManagerQuery");
+        console.log(ManagerQuery);
+        //${data[i].id}
+
+        await query(ManagerQuery, function (err, managerData) {
+            if (err) throw err;
+            console.log("nested query \n i is" + i);
+            // console.log(managerData);
+            // data[i].manager = managerData.FullName;
+            // data[i].manager = managerData;
+            // console.log(data[i].manager);  
+            console.log(managerData[0].FullName);
+            console.log(data[i]);
+        });
+        i++;
+    }
+    console.log('Done!');
+}
+
+
+// for (i = 0; i < data.length; i++) {
+//     console.log("inside for loop data[i].id is");
+//     console.log(data[i].id);
+//     ManagerQuery =
+//         `SELECT CONCAT_WS(' ', first_name, last_name) AS FullName
+//         FROM employeesTable
+//         where id =(
+//         SELECT manager_id
+//         FROM employeesTable
+//         where id = 5);`;
+//     //${data[i].id}
+
+//     connection.query(ManagerQuery, function (err, managerData) {
+//         if (err) throw err;
+//         console.log("nested query \n i is");
+//         console.log(i);
+//         console.log(data[i]);
+//         // console.log(managerData);
+//         // data[i].manager = managerData.FullName;
+//         // data[i].manager = managerData;
+//         // console.log(data[i].manager);                
+//     });
+// }
 
 
 // function viewByManager() {

@@ -45,7 +45,7 @@ CREATE TABLE EmployeesTable (
 );
 
 INSERT INTO EmployeesTable 
-VALUES (2, 'Chester', 'Nimitz', 2, NULL);
+VALUES (2, 'Chester', 'Nimitz', 2, 2);
 INSERT INTO EmployeesTable 
 VALUES (3, 'George', 'Murray', 3, 2);
 INSERT INTO EmployeesTable 
