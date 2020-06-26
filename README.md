@@ -8,8 +8,8 @@ npm install
 
 # Screenshots
 
-<img src='https://github.com/gshaver82/SQLEmployeeTracker/blob/master/consoleWalkthrough1.JPG' alt=screenshot width=200>
-<img src='https://github.com/gshaver82/SQLEmployeeTracker/blob/master/consoleWalkthrough2.JPG' alt=screenshot width=200>
+<img src='https://github.com/gshaver82/SQLEmployeeTracker/blob/master/consoleWalkthrough1.JPG' alt=screenshot width=800>
+<img src='https://github.com/gshaver82/SQLEmployeeTracker/blob/master/consoleWalkthrough2.JPG' alt=screenshot width=800>
 
 #  Video link
 
