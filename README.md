@@ -5,6 +5,17 @@ uses a command line interface to manipulate a SQL database and add remove employ
 none
 # Installation
 npm install
+
+# Screenshots
+
+<img src='https://github.com/gshaver82/SQLEmployeeTracker/blob/master/consoleWalkthrough1.JPG' alt=screenshot width=200>
+<img src='https://github.com/gshaver82/SQLEmployeeTracker/blob/master/consoleWalkthrough2.JPG' alt=screenshot width=200>
+
+#  Video link
+
+
+<a href='https://youtu.be/0suxje9FUSY '>Youtube link of Program demonstration</a>
+
 # Usage
 node app.js
 # License
