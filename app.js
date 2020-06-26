@@ -59,7 +59,7 @@ function StartPrompt() {
                     "Update Employee role",
                     "Update Employee manager",
                     "Add role",
-                    "Remove role DO NOT USE IF THERE ARE NO VALID ROLES TO REMOVE",
+                    "Remove role",
                     "quit"
                 ],
             }
